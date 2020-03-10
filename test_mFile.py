@@ -4,9 +4,9 @@ import shutil
 
 import maya.cmds as cmds 
 
-import animExporter.mFile
-reload (animExporter.mFile)
-from animExporter.mFile import MFile 
+import mFile.mFile 
+reload (mFile.mFile)
+from mFile.mFile  import MFile 
 
 
 class TestMFile(unittest.TestCase):
@@ -69,8 +69,18 @@ class TestMFile(unittest.TestCase):
 		result = MFile.getNamespaces()
 		self.assertEqual(len(result), 0)
 
-	
+	def test_new(self):
+		MFile.new("newFile")
+		result = cmds.file(q = True, expandName = True).split("/")[-1]
+		self.assertEqual(result, "newFile.ma")
 
+	def test_getDir(self):
+		MFile.new("newFile")
+		result =  "/".join(cmds.file(q = True, expandName = True).split("/")[0:-1])
+		self.assertEqual(result, MFile.getDir())
+
+	def test_save(self):
+		pass
 
 def runTests():
 	print("\nTEST MFILE")

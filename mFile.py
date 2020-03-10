@@ -1,8 +1,39 @@
 import maya.cmds as cmds 
 
 class MFile(object):
-	SAFECOUNT = 100
+	""" Class to interface maya files. """
+	#TODO remove cmds and use API
 	
+	SAFECOUNT = 100
+
+	@classmethod 
+	def open(cls, path):
+		cmds.file(path, f = True, open = True)
+
+	@classmethod 
+	def new(cls, name = "defaultUntitled", ma = True):
+		cmds.file( force = True, new = True)
+		fileType = "mb" 
+		if ma:
+			fileType = "ma" 
+
+		cmds.file(rename = "{}.{}".format(name, fileType))
+
+	@classmethod 
+	def save(cls):
+		pass
+
+	@classmethod 
+	def getDir(cls):
+		path = MFile.getPath()
+		path = path.split("/")
+		path = "/".join(path[0:-1])
+		return path
+
+	@classmethod
+	def getPath(cls):
+		return cmds.file(q = True, expandName = True);
+
 	@classmethod
 	def listReferences(cls):
 		return cmds.ls(references = True)
