@@ -2,17 +2,17 @@ import maya.cmds as cmds
 
 class MFile(object):
 	""" Class to interface maya files. """
-	#TODO remove cmds and use API
-	
-	SAFECOUNT = 100
+	#TODO remove cmds and use OpenMaya
+	SAFECOUNT = 30
 
 	@classmethod 
 	def open(cls, path):
 		cmds.file(path, f = True, open = True)
 
-	@classmethod 
+	@classmethod
 	def new(cls, name = "defaultUntitled", ma = True):
 		cmds.file( force = True, new = True)
+		
 		fileType = "mb" 
 		if ma:
 			fileType = "ma" 
@@ -21,7 +21,25 @@ class MFile(object):
 
 	@classmethod 
 	def save(cls):
-		pass
+		return cmds.file(save=True)
+
+	@classmethod 
+	def sceneName(cls):
+		return cmds.file(query = True, sceneName = True).replace(".ma", "")
+
+	@classmethod 
+	def saveAs(cls, name, path = None, ma = True):
+		fileType = "mb" 
+		if ma:
+			fileType = "ma" 
+		
+		name = "{}.{}".format(name, fileType)
+		filePath = name
+		if path:
+			filePath = "{}/{}".format(path, name)
+
+		cmds.file(rename="{}".format(filePath))
+		return MFile.save()
 
 	@classmethod 
 	def getDir(cls):
@@ -40,15 +58,13 @@ class MFile(object):
 
 	@classmethod
 	def importAllReferences(cls):
+
 		references = MFile.listReferences()
 		for ref in references:
 			try:
 				MFile.importReference(ref)
 			except RuntimeError as e:
 				print(e)
-				
-		if len(MFile.listReferences()) != 0:
-			MFile.importAllReferences()
 
 	@classmethod
 	def importReference(cls, reference):
@@ -60,14 +76,12 @@ class MFile(object):
 		namespaces = cmds.namespaceInfo(":", lon =  True)
 		namespaces.remove("UI")
 		namespaces.remove("shared") 
-		
 		return namespaces
 	
 	@classmethod
 	def cleanNamespace(cls, namespace):
 		cmds.namespace(f = True, mv=(':{}'.format(namespace), ':') )
 		cmds.namespace(rm =namespace)
-
 
 	@classmethod
 	def cleanAllNamespaces(cls):
@@ -82,6 +96,9 @@ class MFile(object):
 				exceptionNamespaces.append(ns)
 
 		if len(MFile.getNamespaces()) > len(MFile.listReferences()):
+
+			if safecount == MFile.SAFECOUNT:
+				return
 			MFile.cleanAllNamespaces()
 
 		

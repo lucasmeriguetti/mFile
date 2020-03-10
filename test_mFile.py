@@ -4,9 +4,9 @@ import shutil
 
 import maya.cmds as cmds 
 
-import mFile.mFile 
-reload (mFile.mFile)
-from mFile.mFile  import MFile 
+import mayaio.mFile 
+reload (mayaio.mFile)
+from mayaio.mFile  import MFile 
 
 
 class TestMFile(unittest.TestCase):
@@ -80,7 +80,11 @@ class TestMFile(unittest.TestCase):
 		self.assertEqual(result, MFile.getDir())
 
 	def test_save(self):
-		pass
+		MFile.new("newFile")
+		MFile.saveAs("anotherFile", path = TestMFile.path)
+		path = os.path.join(TestMFile.path, "anotherFile.ma")
+		result = os.path.isfile(path)
+		self.assertTrue(result)
 
 def runTests():
 	print("\nTEST MFILE")
