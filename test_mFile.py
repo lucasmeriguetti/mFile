@@ -1,9 +1,8 @@
 import unittest
 import os
 import shutil
-
 import maya.cmds as cmds 
-
+import maya.mel as mel
 import mayaio.mFile 
 reload (mayaio.mFile)
 from mayaio.mFile  import MFile 

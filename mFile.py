@@ -58,13 +58,27 @@ class MFile(object):
 
 	@classmethod
 	def importAllReferences(cls):
+		count = 0;
+		while len(MFile.listReferences()) > 0:
+			references = MFile.listReferences()
 
-		references = MFile.listReferences()
-		for ref in references:
-			try:
-				MFile.importReference(ref)
-			except RuntimeError as e:
-				print(e)
+			for ref in references:
+				try:
+					MFile.importReference(ref)
+				except RuntimeError as e:
+					print(e)
+
+			if len(references) == len(MFile.listReferences()):
+				cmds.warning("It seems like theses references can't be imported: {}\n".format(references))
+				return
+
+			if count > MFile.SAFECOUNT:
+				cmds.warning("Looped for {} times. Returning.".format(MFile.SAFECOUNT))
+				return
+
+			count += 1
+
+		
 
 	@classmethod
 	def importReference(cls, reference):
