@@ -1,9 +1,16 @@
 import maya.cmds as cmds 
+import maya.mel as mel
+import os
 
 class MFile(object):
 	""" Class to interface maya files. """
 	#TODO remove cmds and use OpenMaya
 	SAFECOUNT = 30
+
+	@classmethod
+	def getMayaRootPath(self):
+		paths = mel.eval("getenv MAYA_APP_DIR;").split("/")
+		return os.path.join(paths[0], os.sep, *paths[1:])
 
 	@classmethod 
 	def open(cls, path):
