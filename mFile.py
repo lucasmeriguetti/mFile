@@ -16,6 +16,7 @@ class MFile(object):
 	def open(cls, path):
 		cmds.file(path, f = True, open = True)
 
+
 	@classmethod
 	def new(cls, name = "defaultUntitled", ma = True):
 		cmds.file( force = True, new = True)
