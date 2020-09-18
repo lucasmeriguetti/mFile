@@ -65,6 +65,15 @@ class MFile(object):
 		return cmds.ls(references = True)
 
 	@classmethod
+	def unloadAllReferences(cls):
+		references = MFile.listReferences()
+		try:
+			[cmds.file(unloadReference = r) for r in references]
+		except Exception as e:
+			print e
+
+
+	@classmethod
 	def importAllReferences(cls):
 		count = 0;
 		while len(MFile.listReferences()) > 0:
